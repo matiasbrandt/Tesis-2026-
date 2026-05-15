@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>De la Abstracción a la Significación · Avances</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            color: #f0f0f0;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 8vw, 2.2rem);
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 1.2rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #aaa;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .grupo-videos {
+            margin-bottom: 2.5rem;
+        }
+
+        .grupo-fila {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        .video-container {
+            flex: 0 0 auto;
+        }
+
+        .video-thumb {
+            width: 200px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .video-thumb:hover {
+            border-color: rgba(180, 130, 255, 0.5);
+            transform: scale(1.02);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .thumb-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #0a0a0a;
+        }
+
+        .thumb-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s ease;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .thumb-play svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+            margin-left: 2px;
+        }
+
+        .video-thumb:hover .thumb-play {
+            background: rgba(180, 130, 255, 0.8);
+            border-color: white;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        .video-player-wrapper {
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .video-player-wrapper.active {
+            display: block;
+        }
+
+        .video-player {
+            width: 100%;
+            max-width: 400px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .video-player video {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: #000;
+            display: block;
+        }
+
+        .video-label {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 400px;
+        }
+
+        .close-video {
+            cursor: pointer;
+            color: #aaa;
+            font-size: 0.7rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .close-video:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        .indice-numero {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 0.3rem;
+            text-align: center;
+        }
+
+        .footer-note {
+            margin-top: 3.5rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #3a3a3a;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 2rem;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1.2rem;
+            }
+            .video-thumb {
+                width: 150px;
+            }
+            .thumb-play {
+                width: 32px;
+                height: 32px;
+            }
+            .thumb-play svg {
+                width: 16px;
+                height: 16px;
+            }
+            .grupo-fila {
+                gap: 0.8rem;
+            }
+            .video-player {
+                max-width: 280px;
+            }
+            .video-label {
+                max-width: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="hero">
+        <h1>Avances y primeros bocetos</h1>
+        <a href="index.html" class="back-btn">← Volver</a>
+    </div>
+
+
+    <div class="grupo-videos">
+        <div class="grupo-fila">
+            <div class="video-container" data-video-id="usd1">
+                <div class="video-thumb">
+                    <img class="thumb-img" src="images/miniatura_usd.png" alt="Miniatura USD 1" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3E1%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="indice-numero">1</div>
+                <div class="video-player-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/usd.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>1</span>
+                        <span class="close-video">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-container" data-video-id="usd2">
+                <div class="video-thumb">
+                    <img class="thumb-img" src="images/miniatura_usd.png" alt="Miniatura USD 2" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3E2%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="indice-numero">2</div>
+                <div class="video-player-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/usd1.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>2</span>
+                        <span class="close-video">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-container" data-video-id="usd3">
+                <div class="video-thumb">
+                    <img class="thumb-img" src="images/miniatura_usd.png" alt="Miniatura USD 3" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3E3%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="indice-numero">3</div>
+                <div class="video-player-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/usd3.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>3</span>
+                        <span class="close-video">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="grupo-videos">
+        <div class="grupo-fila">
+            <div class="video-container" data-video-id="circulo1">
+                <div class="video-thumb">
+                    <img class="thumb-img" src="images/miniatura_circulos.png" alt="Miniatura Círculos 1" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3E1%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="indice-numero">1</div>
+                <div class="video-player-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/circulos.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>1</span>
+                        <span class="close-video">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-container" data-video-id="circulo2">
+                <div class="video-thumb">
+                    <img class="thumb-img" src="images/miniatura_circulos.png" alt="Miniatura Círculos 2" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3E2%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="indice-numero">2</div>
+                <div class="video-player-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/circulos2.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>2</span>
+                        <span class="close-video">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-container" data-video-id="circulo3">
+                <div class="video-thumb">
+                    <img class="thumb-img" src="images/miniatura_circulos.png" alt="Miniatura Círculos 3" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3E3%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="indice-numero">3</div>
+                <div class="video-player-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/circulos3.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>3</span>
+                        <span class="close-video">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="grupo-videos">
+        <div class="grupo-fila">
+            <div class="video-container" data-video-id="playa1">
+                <div class="video-thumb">
+                    <img class="thumb-img" src="images/miniatura_playa.png" alt="Miniatura Playa 1" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3E1%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="indice-numero">1</div>
+                <div class="video-player-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/Playa1.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>1</span>
+                        <span class="close-video">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-container" data-video-id="playa2">
+                <div class="video-thumb">
+                    <img class="thumb-img" src="images/miniatura_playa.png" alt="Miniatura Playa 2" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3E2%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="indice-numero">2</div>
+                <div class="video-player-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/Playa2.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>2</span>
+                        <span class="close-video">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-container" data-video-id="playa3">
+                <div class="video-thumb">
+                    <img class="thumb-img" src="images/miniatura_playa.png" alt="Miniatura Playa 3" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3E3%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="indice-numero">3</div>
+                <div class="video-player-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/Playa3.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>3</span>
+                        <span class="close-video">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="grupo-videos">
+        <div class="grupo-fila">
+            <div class="video-container" data-video-id="fuego1">
+                <div class="video-thumb">
+                    <img class="thumb-img" src="images/miniatura_fuego.png" alt="Miniatura Fuego" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3E1%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="indice-numero">1</div>
+                <div class="video-player-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/Fuego.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>1</span>
+                        <span class="close-video">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        De la Abstracción a la Significación · Tesis 2026 · Avances y primeros bocetos
+    </div>
+</div>
+
+<script>
+    function setupVideos() {
+        const containers = document.querySelectorAll('.video-container');
+        
+        containers.forEach(container => {
+            const thumb = container.querySelector('.video-thumb');
+            const wrapper = container.querySelector('.video-player-wrapper');
+            const closeBtn = container.querySelector('.close-video');
+            const video = container.querySelector('video');
+            
+            if (!thumb || !wrapper || !closeBtn) return;
+            
+            thumb.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                containers.forEach(other => {
+                    const otherWrapper = other.querySelector('.video-player-wrapper');
+                    const otherThumb = other.querySelector('.video-thumb');
+                    const otherVideo = other.querySelector('video');
+                    
+                    if (otherWrapper && otherWrapper.classList.contains('active')) {
+                        if (otherVideo && !otherVideo.paused) {
+                            otherVideo.pause();
+                        }
+                        otherWrapper.classList.remove('active');
+                        if (otherThumb) {
+                            otherThumb.style.display = '';
+                        }
+                    }
+                });
+                
+                wrapper.classList.add('active');
+                thumb.style.display = 'none';
+                
+                if (video) {
+                    video.play().catch(e => {
+                        console.log("Autoplay bloqueado:", e);
+                    });
+                }
+                
+                setTimeout(() => {
+                    wrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 50);
+            });
+            
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (video && !video.paused) {
+                    video.pause();
+                }
+                wrapper.classList.remove('active');
+                thumb.style.display = '';
+            });
+        });
+    }
+    
+    document.addEventListener('DOMContentLoaded', setupVideos);
+</script>
+
+</body>
+</html>

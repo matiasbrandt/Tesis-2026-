@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>De la Abstracción a la Significación · Sobre el proyecto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            color: #f0f0f0;
+            line-height: 1.5;
+            padding: 2rem 1.5rem;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: clamp(2rem, 8vw, 2.2rem);
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            background: linear-gradient(135deg, #ffffff 0%, #c0c0c0 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 1.2rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            color: #aaa;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            border-color: rgba(255,255,255,0.2);
+        }
+
+        .contenido-texto {
+            margin-top: 2rem;
+        }
+
+        .subtitulo-izquierda {
+            font-size: 1.8rem;
+            font-weight: 450;
+            letter-spacing: -0.3px;
+            color: #e0e0e0;
+            margin-bottom: 1.2rem;
+            text-align: left;
+            border-left: 3px solid rgba(255,255,255,0.3);
+            padding-left: 1rem;
+        }
+
+        .cuerpo-texto {
+            text-align: left;
+            font-size: 1.2rem;
+            font-weight: 350;
+            color: #cacaca;
+            margin-bottom: 2.5rem;
+        }
+
+        .cuerpo-texto p {
+            margin-bottom: 1.2rem;
+        }
+
+        b, strong {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        u {
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 3px;
+        }
+
+        .resaltado-purpura {
+            background-color: rgba(180, 130, 255, 0.2);
+            color: #d9bfff;
+            font-weight: 700;
+            padding: 0.1rem 0.2rem;
+            border-radius: 6px;
+        }
+
+        .resaltado-naranja {
+            background-color: rgba(255, 180, 100, 0.2);
+            color: #ffcc88;
+            font-weight: 700;
+            padding: 0.1rem 0.2rem;
+            border-radius: 6px;
+        }
+
+        .video-container {
+            margin: 0.8rem 0 1.2rem 0;
+        }
+
+        .video-thumb {
+            width: 280px;
+            max-width: 70%;
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+        }
+
+        .video-thumb:hover {
+            border-color: rgba(180, 130, 255, 0.5);
+            transform: scale(1.02);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .thumb-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            background: #0a0a0a;
+        }
+
+        .thumb-play {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 44px;
+            height: 44px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s ease;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .thumb-play svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+            margin-left: 3px;
+        }
+
+        .video-thumb:hover .thumb-play {
+            background: rgba(180, 130, 255, 0.8);
+            border-color: white;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+
+        .video-player-wrapper {
+            margin-top: 0.8rem;
+            display: none;
+        }
+
+        .video-player-wrapper.active {
+            display: block;
+        }
+
+        .video-player {
+            width: 100%;
+            max-width: 560px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .video-player video {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: #000;
+            display: block;
+        }
+
+        .video-label {
+            font-size: 0.7rem;
+            color: #888;
+            margin-top: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 560px;
+        }
+
+        .close-video {
+            cursor: pointer;
+            color: #aaa;
+            font-size: 0.7rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+
+        .close-video:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        .conceptos-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin: 2rem 0 2rem 0;
+            justify-content: flex-start;
+        }
+
+        .concepto-tag {
+            background: rgba(255,255,255,0.04);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            padding: 0.3rem 0.9rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            color: #bbbbbb;
+            letter-spacing: 0.2px;
+            transition: all 0.2s;
+        }
+
+        .concepto-tag:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .programas {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .programas p {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 0.5rem;
+        }
+
+        .footer-note {
+            margin-top: 3.5rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #3a3a3a;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 2rem;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1.2rem;
+            }
+            .subtitulo-izquierda {
+                font-size: 1.4rem;
+            }
+            .cuerpo-texto {
+                font-size: 0.9rem;
+            }
+            .thumb-play {
+                width: 36px;
+                height: 36px;
+            }
+            .thumb-play svg {
+                width: 18px;
+                height: 18px;
+            }
+            .video-thumb {
+                width: 240px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="hero">
+        <h1>Sobre el proyecto</h1>
+        <a href="index.html" class="back-btn">← Volver</a>
+    </div>
+
+    <div class="contenido-texto">
+        <div class="subtitulo-izquierda">
+            Desarrollo de la idea
+        </div>
+
+        <div class="cuerpo-texto">
+            <p>La idea central consiste en llevar a cabo un <span class="resaltado-purpura">video-ensayo</span> enfocado en <span class="resaltado-naranja">problematizar</span> la relación entre <span class="resaltado-purpura">imagen y sonido</span>.</p>
+
+            <p>En principio mi objetivo es exponer cómo se construyen <span class="resaltado-naranja">relaciones simbólicas</span> a través de las <span class="resaltado-naranja">representaciones culturales</span> y paulatinamente se condiciona nuestra mirada instalando distintos <span class="resaltado-naranja">arquetipos/estereotipos</span> de forma inconsciente.</p>
+
+            <p>Para esto, voy a llevar a cabo un <span class="resaltado-purpura">video-ensayo</span> compuesto por múltiples <span class="resaltado-purpura">imágenes abstractas</span> sincronizadas con distintas <span class="resaltado-purpura">piezas sonoras o efectos de sonido</span>, las cuales, voy a ir  <span class="resaltado-naranja">complejizando su composición</span> de forma progresiva y las voy a contrastar entre sí. Con esto pretendo que expongan al <span class="resaltado-purpura">espectador</span> cómo opera la <span class="resaltado-naranja">asociación simbólica</span> entre <span class="resaltado-purpura">imagen y sonido</span>, incluso frente a imágenes o sonidos en principio <span class="resaltado-purpura">abstractos</span>, pero que en relación producen diversas <span class="resaltado-naranja">significaciones</span>.</p>
+
+            <p>Por ejemplo, en una de mis primeras búsquedas, propongo enfrentar al <span class="resaltado-naranja">espectador</span> a un <span class="resaltado-naranja">montaje</span> estructurado en <span class="resaltado-purpura">tres instancias</span>.</p> 
+            <p>Primero a un espiral de líneas onduladas de color amarillo y marrón claro y sin sonido (en principio es tan abstracto que no parece significar nada)</p>
+            
+
+            <div class="video-container" id="video1-container">
+                <div class="video-thumb" data-video="1">
+                    <img class="thumb-img" src="images/miniatura_sample.jpg" alt="Miniatura sample 1" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3ESample 1%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="video-player-wrapper" id="player1-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/sample1.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>Ejemplo 1</span>
+                        <span class="close-video" data-close="1">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+
+            <p>Pero si en una segunda instancia se encuentra sincronizado con un efecto de sonido de viento, se comienza a construir un significado, un paisaje desértico.</p>
+            
+
+            <div class="video-container" id="video2-container">
+                <div class="video-thumb" data-video="2">
+                    <img class="thumb-img" src="images/miniatura_sample.jpg" alt="Miniatura sample 2" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3ESample 2%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="video-player-wrapper" id="player2-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/sample2.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>Ejemplo 2</span>
+                        <span class="close-video" data-close="2">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+
+            <p>Sin embargo, como la idea es exponer el medio como constructo, voy a recurrir al contraste, si en vez de fx de sonido de viento, se escucha música árabe, entonces en esta tercera instancia el significado cambia e inmediatamente nos remite a otra <span class="resaltado-purpura">"postal"</span>, obviamente al estereotipo de medio oriente (construido por la repetición de ciertas imágenes en los medios) y además profundizando, si esta imagen se complementa también con líneas rojas, se remite no solo a esta postal, sino que también se <span class="resaltado-purpura">complejiza su significación</span>.</p>
+            
+           
+            <div class="video-container" id="video3-container">
+                <div class="video-thumb" data-video="3">
+                    <img class="thumb-img" src="images/miniatura_sample.jpg" alt="Miniatura sample 3" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 240\'%3E%3Crect width=\'400\' height=\'240\' fill=\'%23222\'/%3E%3Ctext x=\'200\' y=\'120\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'16\'%3ESample 3%3C/text%3E%3C/svg%3E'">
+                    <div class="thumb-play">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="video-player-wrapper" id="player3-wrapper">
+                    <div class="video-player">
+                        <video controls preload="metadata">
+                            <source src="videos/sample3.mp4" type="video/mp4">
+                            Tu navegador no soporta reproducción de video.
+                        </video>
+                    </div>
+                    <div class="video-label">
+                        <span>Ejemplo 3</span>
+                        <span class="close-video" data-close="3">✕ Cerrar</span>
+                    </div>
+                </div>
+            </div>
+
+            <p>La idea es entonces invitar al <span class="resaltado-naranja">espectador</span> a reflexionar sobre cómo estas asociaciones no surgen de forma natural (o única) sino que resultan de un <span class="resaltado-purpura">proceso de construcción y de aprendizaje cultural</span> y además sobre cómo el <span class="resaltado-naranja">sonido</span> (muchas veces subestimado) puede despertar distintos <span class="resaltado-purpura">significados</span>.</p>
+        </div>
+
+        <div class="subtitulo-izquierda" style="font-size: 1.2rem; margin-top: 0.5rem; border-left-color: rgba(255,255,255,0.2);">
+            Conceptos claves
+        </div>
+        <div class="conceptos-grid">
+            <span class="concepto-tag">Video-Ensayo</span>
+            <span class="concepto-tag">Imagen y Sonido</span>
+            <span class="concepto-tag">Relaciones Simbólicas</span>
+            <span class="concepto-tag">Representaciones Culturales</span>
+            <span class="concepto-tag">Arquetipos/Estereotipos</span>
+            <span class="concepto-tag">Abstracto</span>
+            <span class="concepto-tag">Asociación Simbólica</span>
+            <span class="concepto-tag">Significación</span>
+            <span class="concepto-tag">Montaje</span>
+            <span class="concepto-tag">Efecto Kulechov</span>
+            <span class="concepto-tag">Aprendizaje Cultural</span>
+            <span class="concepto-tag">Contraste</span>
+        </div>
+
+        <div class="programas">
+            <div class="subtitulo-izquierda" style="font-size: 1rem; border-left-color: rgba(255,255,255,0.15);">
+                Herramientas / Software
+            </div>
+            <p><b>Resolume Arena</b> · <b>Adobe Premiere</b> · <b>Adobe Audition</b> · <b>HTML/CSS/JS</b> · Entre otros</p>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        De la Abstracción a la Significación · Tesis 2026 · Video-ensayo
+    </div>
+</div>
+
+<script>
+    const videos = {
+        1: {
+            thumb: document.querySelector('[data-video="1"]'),
+            wrapper: document.getElementById('player1-wrapper'),
+            closeBtn: document.querySelector('[data-close="1"]'),
+            video: null
+        },
+        2: {
+            thumb: document.querySelector('[data-video="2"]'),
+            wrapper: document.getElementById('player2-wrapper'),
+            closeBtn: document.querySelector('[data-close="2"]'),
+            video: null
+        },
+        3: {
+            thumb: document.querySelector('[data-video="3"]'),
+            wrapper: document.getElementById('player3-wrapper'),
+            closeBtn: document.querySelector('[data-close="3"]'),
+            video: null
+        }
+    };
+
+   
+    for (let id in videos) {
+        if (videos[id].wrapper) {
+            videos[id].video = videos[id].wrapper.querySelector('video');
+        }
+    }
+
+    function showVideo(videoId) {
+       
+        for (let id in videos) {
+            const v = videos[id];
+            if (v.wrapper && v.wrapper.classList.contains('active')) {
+                if (v.video && !v.video.paused) {
+                    v.video.pause();
+                }
+                v.wrapper.classList.remove('active');
+            }
+            if (v.thumb) {
+                v.thumb.style.display = '';
+            }
+        }
+        
+        const selected = videos[videoId];
+        if (selected && selected.wrapper) {
+            selected.wrapper.classList.add('active');
+            if (selected.thumb) {
+                selected.thumb.style.display = 'none';
+            }
+            
+           
+            if (selected.video) {
+                selected.video.play().catch(e => {
+                    
+                    console.log("Autoplay bloqueado por el navegador:", e);
+                });
+            }
+            
+            setTimeout(() => {
+                selected.wrapper.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 50);
+        }
+    }
+
+    function hideVideo(videoId) {
+        const selected = videos[videoId];
+        if (selected && selected.wrapper) {
+            if (selected.video && !selected.video.paused) {
+                selected.video.pause();
+            }
+            selected.wrapper.classList.remove('active');
+            if (selected.thumb) {
+                selected.thumb.style.display = '';
+            }
+        }
+    }
+
+    for (let id in videos) {
+        const v = videos[id];
+        if (v.thumb) {
+            v.thumb.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showVideo(id);
+            });
+        }
+        if (v.closeBtn) {
+            v.closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                hideVideo(id);
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

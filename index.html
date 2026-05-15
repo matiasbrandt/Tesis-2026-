@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>De la Abstracción a la Significación · Tesis 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            color: #f0f0f0;
+            line-height: 1.4;
+            padding: 2rem 0 2rem 0;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/fondito.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            opacity: 0.30;
+            pointer-events: none;
+            z-index: -1;
+            background-attachment: fixed;
+            animation: heartbeatPulse 10s ease-in-out infinite;
+        }
+
+        @keyframes heartbeatPulse {
+            0% {
+                opacity: 0.30;
+            }
+            14% {
+                opacity: 0.65;
+            }
+            28% {
+                opacity: 0.30;
+            }
+            42% {
+                opacity: 0.58;
+            }
+            70% {
+                opacity: 0.30;
+            }
+            100% {
+                opacity: 0.30;
+            }
+        }
+
+        .container-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero {
+            position: relative;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            margin-bottom: 3rem;
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.6);
+            transition: all 0.2s ease;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .logo-unlp {
+            margin-bottom: 1.2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-unlp img {
+            max-width: 320px;
+            width: 100%;
+            height: auto;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            filter: brightness(0.95);
+        }
+
+        .logo-unlp img:hover {
+            opacity: 1;
+            filter: brightness(1);
+        }
+
+        h1 {
+            font-size: clamp(1rem, 5vw, 2.8rem);
+            font-weight: 500;
+            letter-spacing: -0.01em;
+            background: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .tesis-sub {
+            font-size: clamp(1.8rem, 8vw, 1.2rem);
+            font-weight: 480;
+            display: block;
+            margin-top: 0.3rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: #ccc;
+            margin-top: 0.25rem;
+        }
+
+        .autor-info {
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            color: #e0e0e0;
+        }
+
+        .autor-info span {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            backdrop-filter: blur(2px);
+            font-weight: 350;
+        }
+
+        .slogan {
+            font-size: 1.8rem;
+            max-width: 550px;
+            margin: 1.2rem auto 0 auto;
+            color: #d4d4d4;
+            font-weight: 380;
+            line-height: 1.3;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.5rem 1.2rem;
+            border-radius: 60px;
+            width: fit-content;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .slogan:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .galeria {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .album-card {
+            background: #0a0a0a;
+            border-radius: 28px;
+            overflow: hidden;
+            transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .album-card:hover {
+            transform: translateY(-8px);
+            background: #111111;
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.8);
+        }
+
+        .album-img {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #030303;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .album-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+            display: block;
+        }
+
+        .album-card:hover .album-img img {
+            transform: scale(1.02);
+        }
+
+        .album-info {
+            padding: 1.2rem 1rem 1.4rem 1rem;
+            text-align: center;
+        }
+
+        .album-title {
+            font-size: 1.35rem;
+            font-weight: 480;
+            letter-spacing: -0.2px;
+            margin-bottom: 0.3rem;
+        }
+
+        .album-sub {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 400;
+        }
+
+        .footer-note {
+            margin-top: 4rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #3a3a3a;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 2rem;
+        }
+
+        .album-card {
+            user-select: none;
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem 0;
+            }
+            .hero {
+                padding: 1.5rem 1rem;
+            }
+            .galeria {
+                gap: 1.2rem;
+            }
+            .album-title {
+                font-size: 1.2rem;
+            }
+            .autor-info {
+                gap: 0.8rem;
+            }
+            .logo-unlp img {
+                max-width: 200px;
+            }
+            .slogan {
+                font-size: 1.3rem;
+            }
+            .tesis-sub {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="hero-content">
+        <div class="logo-unlp">
+            <img src="images/logo_unlp.png" alt="Logo Universidad Nacional de La Plata">
+        </div>
+        
+        <h1>
+            De la Abstracción a la Significación 
+            <span class="tesis-sub">Proyecto de Tesis 2026</span>
+        </h1>
+        
+        <div class="autor-info">
+            <span>👤 Brandt Jascha Matias 75053/2</span>
+            <span>✉︎ matiasbrandt90@gmail.com</span>
+        </div>
+        
+        <div class="slogan" id="videoEnsayoLink">
+            Video-Ensayo
+        </div>
+    </div>
+</div>
+
+<div class="container-inner">
+    <div class="galeria" id="album-grid"></div>
+    
+    <div class="footer-note">
+        De la Abstracción a la Significación - UNLP FDA - 2026
+    </div>
+</div>
+
+<script>
+    const albums = [
+        {
+            nombre: "Referentes",
+            subtitulo: "Artistas de instalaciones, video ensayo, etc.",
+            imagen: "images/miniatura_referentes.png",
+            enlace: "referentes.html"
+        },
+        {
+            nombre: "Avances",
+            subtitulo: "Bocetos, PROCESO, etc.",
+            imagen: "images/miniatura_avances.png",
+            enlace: "avances.html"
+        },
+        {
+            nombre: "Aspectos Técnicos",
+            subtitulo: "Soporte, Software, Materiales, etc.",
+            imagen: "images/tecnicos.png",
+            enlace: "tecnicos.html"
+        },
+        {
+            nombre: "Sobre el Proyecto..",
+            subtitulo: "Desarrollo de la idea",
+            imagen: "images/sobre_proyecto.png",
+            enlace: "sobre-el-proyecto.html"
+        }
+    ];
+
+    function cargarGaleria() {
+        const grid = document.getElementById("album-grid");
+        if (!grid) return;
+
+        grid.innerHTML = ""; 
+
+        albums.forEach(album => {
+            const card = document.createElement("div");
+            card.className = "album-card";
+            card.addEventListener("click", () => {
+                window.location.href = album.enlace;
+            });
+
+            const imgContainer = document.createElement("div");
+            imgContainer.className = "album-img";
+            const img = document.createElement("img");
+            img.src = album.imagen;
+            img.alt = album.nombre;
+            img.loading = "lazy";
+            img.onerror = function() {
+                this.style.opacity = "0.4";
+                this.style.objectFit = "contain";
+                this.style.padding = "1rem";
+                this.alt = "📷 preview";
+            };
+            imgContainer.appendChild(img);
+
+            const infoDiv = document.createElement("div");
+            infoDiv.className = "album-info";
+
+            const titleSpan = document.createElement("div");
+            titleSpan.className = "album-title";
+            titleSpan.innerText = album.nombre;
+
+            const subSpan = document.createElement("div");
+            subSpan.className = "album-sub";
+            subSpan.innerText = album.subtitulo;
+
+            infoDiv.appendChild(titleSpan);
+            infoDiv.appendChild(subSpan);
+
+            card.appendChild(imgContainer);
+            card.appendChild(infoDiv);
+            grid.appendChild(card);
+        });
+    }
+
+    function setupVideoEnsayo() {
+        const videoBtn = document.getElementById("videoEnsayoLink");
+        if (videoBtn) {
+            videoBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                window.location.href = "video_ensayo.html";
+            });
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        cargarGaleria();
+        setupVideoEnsayo();
+    });
+</script>
+
+</body>
+</html>
